@@ -7,19 +7,18 @@ import (
 )
 
 func runUniq(args []string, input string) (string, error) {
-
 	var outBuf bytes.Buffer
 	var inBuf bytes.Buffer
 	inBuf.WriteString(input)
+
+	// оригинальные
 	oldStdin := os.Stdin
 	oldStdout := os.Stdout
 
-	// трассировка на буфферы
-	r, w, _ := os.Pipe()
+	// трассировка на буффер
 	os.Stdin = &inBuf
-	os.Stdout = w
+	os.Stdout = &outBuf
 
-	// возврат stdin и stdout
 	defer func() {
 		os.Stdin = oldStdin
 		os.Stdout = oldStdout
