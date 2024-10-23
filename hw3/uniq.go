@@ -58,11 +58,38 @@ func main() {
 		}
 		line = processLine(line, *numFieldsFlag, *numCharsFlag)
 		if line != "" {
-			lineCount[line]++
+			linesCount[line]++
 		}
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintf(os.Stderr, "Ошибка чтения: %v\n", err)
 		os.Exit(1)
 	}
+
+	for line, count := range linesCount {
+		if *countFlag {
+			fmt.Fprintf(output, "%d %s\n", count, line)
+		} else if *doubleFlag && count > 1 {
+			fmt.Fprintln(output, line)
+		} else if *uniqueFlag && count == 1 {
+			fmt.Fprintln(output, line)
+		} else if !*countFlag && !*doubleFlag && !*uniqueFlag {
+			fmt.Fprintln(output, line)
+		}
+	}
+}
+
+func processLine(line string, numFields int, numChars int) string {
+	if numFields > 0 {
+		fields := strings.Fields(line)
+		if len(fields) > numFields {
+			line = strings.Join(fields[numFields:], " ")
+		} else {
+			line = ""
+		}
+	}
+	if numChars > 0 && len(line) > numChars {
+		line = line[numChars:]
+	}
+	return line
 }
